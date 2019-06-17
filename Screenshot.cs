@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Screenshot : MonoBehaviour
 {
-	public Rect rect;
+    public string savePath = "d:";
+    public string feilName = "File";
+    public Rect rect = new Rect(0, 0, 1920, 1080);
     // Use this for initialization
     void Start()
     {
@@ -14,10 +16,10 @@ public class Screenshot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if (Input.GetKeyDown(KeyCode.K))
-		{
-			CaptureScreen(GetComponent<Camera>(),rect);
-		}
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            CaptureScreen(Camera.main, rect);
+        }
     }
     public Texture2D CaptureScreen(Camera came, Rect r)
     {
@@ -37,7 +39,13 @@ public class Screenshot : MonoBehaviour
         GameObject.Destroy(rt);
 
         byte[] bytes = screenShot.EncodeToPNG();
-        string filename = "d:" + "/ScreenShot.png";
+        // string filename = "d:" + "/ScreenShot.png";
+        string filename = Application.streamingAssetsPath + "/ScreenShot.png";
+        if (!System.IO.Directory.Exists(Application.streamingAssetsPath))
+        {
+            System.IO.Directory.CreateDirectory(Application.streamingAssetsPath);
+            Debug.Log("创建：" + Application.streamingAssetsPath);
+        }
         System.IO.File.WriteAllBytes(filename, bytes);
 
         return screenShot;
