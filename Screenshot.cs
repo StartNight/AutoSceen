@@ -5,15 +5,14 @@ using UnityEngine;
 public class Screenshot : MonoBehaviour
 {
     public string savePath = "d:";
-    public string feilName = "File";
+    //10101001-地形-高山
+    public string id = "10101001";
+    public string type = "地形";
+    public string feilName = "高山";
+    //展示图片：编号+类型+序号 例：101010011001-图片-001
+    private string screenType = "1";
+    public int screenID = 1;
     public Rect rect = new Rect(0, 0, 1920, 1080);
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))
@@ -40,14 +39,33 @@ public class Screenshot : MonoBehaviour
 
         byte[] bytes = screenShot.EncodeToPNG();
         // string filename = "d:" + "/ScreenShot.png";
-        string filename = Application.streamingAssetsPath + "/ScreenShot.png";
-        if (!System.IO.Directory.Exists(Application.streamingAssetsPath))
+        string path = savePath + "/" + "Unity-" + type + "/" + id + "-" + type + "-" + feilName;
+        string screenName = id + screenType + screenID + "-图片-00";//+ screenID + ".png";
+        string screenFileName = path + "/" + screenName;
+        if (!System.IO.Directory.Exists(path))
         {
-            System.IO.Directory.CreateDirectory(Application.streamingAssetsPath);
-            Debug.Log("创建：" + Application.streamingAssetsPath);
+            System.IO.Directory.CreateDirectory(path);
+            Debug.Log("创建：" + path);
         }
-        System.IO.File.WriteAllBytes(filename, bytes);
-
+        CheckNScreenName(path, screenID, bytes);
         return screenShot;
+    }
+    private void CheckNScreenName(string path, int _id, byte[] bytes)
+    {
+        string tempPath = path + "/" + id + screenType + "00" + _id + "-图片-00" + _id + ".png";
+        if (!System.IO.File.Exists(tempPath))
+        {
+            System.IO.File.WriteAllBytes(tempPath, bytes);
+            Debug.Log("保存图片：" + tempPath);
+        }
+        else
+        {
+            if (_id > 10)
+            {
+                Debug.LogError("图片序号还不能大于10");
+            }
+            _id++;
+            CheckNScreenName(path, _id, bytes);
+        }
     }
 }
